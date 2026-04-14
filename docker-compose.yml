@@ -1,8 +1,46 @@
 version: '3.9'
 
 services:
+  migrate:
+    build: .
+    container_name: rag_db_init
+    working_dir: /app
+    command: python -m app.db.init_db
+    env_file:
+      - .env
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+
   api:
     build: .
     container_name: rag_api
     ports:
       - "8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+
+  db:
+    image: postgres:15
+    container_name: rag_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rag
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
