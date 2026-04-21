@@ -1,7 +1,7 @@
 .PHONY: build db-build stop
 
 build:
-	docker compose down -v
+	docker compose down
 	docker compose up --build
 
 db-build:

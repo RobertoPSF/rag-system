@@ -10,6 +10,7 @@ class Document(Base):
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String, nullable=False)
     content = Column(Text, nullable=False)
+    content_hash = Column(String, nullable=False)
     status = Column(String, default="pending")
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -24,6 +25,7 @@ class Chunk(Base):
     document_id = Column(Integer, ForeignKey("documents.id"))
     content = Column(Text, nullable=False)
     chunk_index = Column(Integer)
+    embedding = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     document = relationship("Document", back_populates="chunks")

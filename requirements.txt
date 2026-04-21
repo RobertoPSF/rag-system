@@ -4,3 +4,9 @@ sqlalchemy
 psycopg2-binary
 python-multipart
 redis
+langchain
+langchain-text-splitters
+langchain-community
+langchain-ollama
+faiss-cpu
+numpy
