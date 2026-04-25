@@ -10,6 +10,9 @@ def process_document(db, document):
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
     chunks = splitter.split_text(document.content)
 
+    chunk_entities = []
+    total_tokens = 0
+
     for i, chunk_text in enumerate(chunks):
         embedding = generate_embedding(chunk_text)
 
@@ -20,10 +23,23 @@ def process_document(db, document):
             embedding=json.dumps(embedding)
         )
 
-        db.add(chunk)
-        db.commit()
+        chunk_entities.append(chunk)
+        total_tokens += len(chunk_text)
 
         add_to_index(document.id, i, embedding)
+
+    db.add_all(chunk_entities)
+
+    stats = models.Stats(
+        document_id=document.id,
+        total_chunks=len(chunks),
+        total_tokens=total_tokens
+    )
+
+    db.add(stats)
+    db.commit()
+
+    add_to_index(document.id, i, embedding)
 
     stats = models.Stats(
         document_id=document.id,

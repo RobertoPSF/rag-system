@@ -10,7 +10,7 @@ class Document(Base):
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String, nullable=False)
     content = Column(Text, nullable=False)
-    content_hash = Column(String, nullable=False)
+    content_hash = Column(String, nullable=False, unique=True, index=True)
     status = Column(String, default="pending")
     created_at = Column(DateTime, default=datetime.utcnow)
 

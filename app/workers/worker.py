@@ -17,7 +17,7 @@ def run_worker():
             try:
                 document = db.get(models.Document, document_id)
                 if not document or document.status == "completed":
-                    continue
+                    return
 
                 document.status = "processing"
                 db.commit()
